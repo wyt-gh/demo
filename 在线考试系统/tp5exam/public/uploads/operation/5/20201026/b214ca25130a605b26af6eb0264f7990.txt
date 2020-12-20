@@ -1,0 +1,2 @@
+码云: 提高github下载速度
+在 github.com 后添加 cnpmjs.org: 提高 github下载速度

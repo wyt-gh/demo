@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html class="x-admin-sm">
+    <head>
+        <meta charset="UTF-8">
+        <title>欢迎页面-X-admin2.2</title>
+        {include file="common:head"}
+    </head>
+    <body>
+        <div class="layui-fluid">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-body ">
+                            <form class="layui-form layui-col-space5">
+                            	题目<textarea name="selection_name" required lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+                            	A选项<textarea name="A" required lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+				           		B选项<textarea name="B" required lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+				           		C选项<textarea name="C" required lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+				           		D选项<textarea name="D" required lay-verify="required" placeholder="请输入" class="layui-textarea"></textarea>
+				           		<div class="layui-input-inline">
+				           		正确答案<input type="text" name="right_key" lay-verify="required" class="layui-input">
+				           		</div>
+				           		<div class="">
+	                                <select id="major" name="major_id"  lay-filter="major" class="layui-input-block">
+	                                	{volist name="major" id="m"}
+	                                	<option value="{$m.id}">{$m.major_name}</option>
+	                                	{/volist}
+	                                </select>
+                            	</div>
+                            	<div class="">
+	                                <select id="subject" name="subject_id" class="layui-input-inline">
+	                                	{volist name="subject" id="s"}
+	                                	<option value="{$s.id}">{$s.subject_name}</option>
+	                                	{/volist}
+	                                </select>
+                            	</div>
+                            	<div class="layui-show-xs-block">
+				                    <button class="layui-btn" type="button" lay-submit="" lay-filter="add">增加</button>
+				                </div>
+                            </form>
+                        </div>
+                        
+
+                    </div>
+                </div>
+            </div>
+        </div> 
+    </body>
+    <script>
+		layui.use(['laydate','form'], function(){
+			var laydate = layui.laydate;
+			var form = layui.form;
+
+			form.on('submit(add)', function(data){
+	            //发异步，把数据提交给php
+	            $.post("{:url('selection/add')}",{data:filterData(data.field)}, function(data) {
+					if (data.code == 1) {
+						layer.alert(data.msg, {
+						    icon: 6
+						},
+						function(data) {
+						    //关闭当前frame
+						    xadmin.close();
+						    // 可以对父窗口进行刷新 
+						    xadmin.father_reload();
+						});  
+					} else {
+						layer.alert(data.msg, {
+						    icon: 5
+						},
+						function() {
+						    //关闭当前frame
+						    xadmin.close();
+						    // 可以对父窗口进行刷新 
+						    xadmin.father_reload();
+						});                     
+					}                      
+				})
+				return false;
+			});
+
+	        //form提交数组函数
+	        filterData = function (data) {
+	            var roleListIds = {};
+	            var temp = {};
+	            for (var key in data) {
+	                if (key.indexOf("[") === -1) {
+	                    roleListIds[key] = data[key];
+	                } else {
+	                    temp[key] = data[key];
+	                }
+	            }
+
+	            var temp_arr = [];
+	            for (var key in temp) {
+	                var _arr = key.split("[");
+	                var field = _arr[0];
+	                if (temp_arr.indexOf(field) === -1) {
+	                    temp_arr.push(field);
+	                }
+	            }
+
+	            for (var i in temp_arr) {
+	                var _f = temp_arr[i];
+	                var _temp = [];
+	                for (var k in temp) {
+	                    console.log(k);
+	                    if (k.indexOf(_f) !== -1) {
+	                        _temp.push(temp[k])
+	                    }
+	                }
+	                roleListIds[_f] = _temp;
+	            }
+	            return roleListIds;
+	        };
+
+			//执行一个laydate实例
+			laydate.render({
+			  elem: '#start' //指定元素
+			});
+
+			//执行一个laydate实例
+			laydate.render({
+			  elem: '#end' //指定元素
+			});
+		});
+
+ 
+
+    </script>
+
+</html>
